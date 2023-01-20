@@ -11,7 +11,7 @@ users = [uuid4() for _ in range(100)]
 
 
 async def init_ad():
-    ad_credit = [{"id": str(i), "credit": 100, "impression": 0, "click": 0} for i in range(1, 10)]
+    ad_credit = [{"id": str(i), "credit": 100, "impression": 0, "click": 0} for i in range(1, 11)]
     await db.insert_many(ad_credit)
 
 

@@ -1,10 +1,11 @@
 # Ad-Event-Stream
 This is an advertising system demo using [faust-streaming](https://github.com/faust-streaming/faust).
+- throughput: 20 events per second with 1 consumer
 
 ## Diagram
 ![diagram](docs/diagrams_image.png)
-- The actual implementation differs slightly from the diagram above.
-  - To simulate easily, an event is produced by faust timer.
+- The actual implementation slightly differs from the diagram above.
+  - New event is produced by faust timer to simulate easily.
 
 ## Run
 ```shell
