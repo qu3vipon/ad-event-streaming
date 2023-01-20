@@ -2,14 +2,25 @@ import random
 from typing import Optional
 
 import faust
+from redis import Redis
 
 from domain.entity import AdEvent
 from application.display import get_ad_to_display
 from application.charge import get_charge_values
-from infra.mongo_db import charge, db, init_db, visualize_after_charge
+from infra.mongo_db import charge, visualize_after_charge, client, drop_collection, seeding
 from infra.redis import RollingBloomFilter
 
-init_db()
+
+def init_storage():
+    loop = client.get_io_loop()
+    loop.run_until_complete(drop_collection())
+    loop.run_until_complete(seeding())
+
+    redis = Redis()
+    redis.flushdb()
+
+
+init_storage()
 
 app = faust.App("ad-stream")
 ad_event_topic = app.topic("ad-event", value_type=AdEvent, key_type=str, key_serializer="raw")
