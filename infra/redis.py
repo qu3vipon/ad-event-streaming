@@ -5,7 +5,7 @@ from typing import ClassVar, List
 
 from redis import Redis
 
-from domain.entity import DATETIME_FORMAT
+from domain.entity import AD_DATETIME_FORMAT
 
 redis = Redis()
 
@@ -16,7 +16,7 @@ class RollingBloomFilter:
 
     @staticmethod
     def _as_dt(s: str) -> datetime:
-        return datetime.strptime(s, DATETIME_FORMAT)
+        return datetime.strptime(s, AD_DATETIME_FORMAT)
 
     def _get_key(self, at: datetime) -> str:
         return at.strftime(self.KEY_PATTERN)

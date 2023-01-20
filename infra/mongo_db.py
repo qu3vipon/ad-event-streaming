@@ -1,13 +1,10 @@
 from typing import List
-from uuid import uuid4
 
 import motor.motor_asyncio
 from redis import Redis
 
 client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://root:ad-event-stream@localhost:27017")
 db = client.ad_event_stream.ad
-
-users = [uuid4() for _ in range(100)]
 
 
 async def init_ad():
@@ -36,6 +33,15 @@ async def charge(ad_id: int, credit: int, impression: int, click: int):
             }
         }
     )
+
+
+async def visualize_after_charge(event):
+    after_charge = {
+        document["id"]: document["credit"] async for document in db.find()
+    }
+    after_charge = sorted(after_charge.items(), key=lambda kv: (kv[1], kv[0]))
+    print(f"{event=}")
+    print(f"{after_charge=}")
 
 
 def init_db():
