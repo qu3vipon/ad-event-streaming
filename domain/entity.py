@@ -22,6 +22,10 @@ class Ad(faust.Record):
     click: int
 
 
+DATETIME_FORMAT: str = "%Y-%m-%dT%H:%M:%S.%f"
+OVER_CHARGE_OFFSET: int = 0
+
+
 class AdEvent(faust.Record):
     user_id: str
     ad_id: str

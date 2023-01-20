@@ -99,7 +99,14 @@ services:
     container_name: mongodb
     restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ad-event-stream
+
+  redis:
+    image: redis/redis-stack-server
+    container_name: redis
+    hostname: ad-event-stream
+    ports:
+      - "6379:6379"
