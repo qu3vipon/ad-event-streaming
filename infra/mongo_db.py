@@ -25,6 +25,19 @@ async def get_ad_list(over_charge_offset: int) -> List[dict]:
     ]
 
 
+async def charge(ad_id: int, credit: int, impression: int, click: int):
+    await db.update_one(
+        {"id": ad_id},
+        {
+            "$inc": {
+                "credit": -credit,
+                "impression": impression,
+                "click": click,
+            }
+        }
+    )
+
+
 def init_db():
     loop = client.get_io_loop()
     loop.run_until_complete(drop_stale_collection())
