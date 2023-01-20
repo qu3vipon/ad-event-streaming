@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import Tuple
 
 import faust
 
@@ -8,6 +9,11 @@ import faust
 @dataclass
 class User:
     uuid: str
+
+
+def get_charge_values(event_type: str) -> Tuple[int, int, int]:
+    # return: (charge, imp, click)
+    return (1, 1, 0) if event_type == AdEventType.IMPRESSION else (2, 0, 1)
 
 
 class AdEventType(str, Enum):

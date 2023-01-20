@@ -3,7 +3,7 @@ from datetime import datetime
 
 import faust
 
-from domain.entity import AdEvent, AdEventType, OVER_CHARGE_OFFSET
+from domain.entity import AdEvent, AdEventType, OVER_CHARGE_OFFSET, get_charge_values
 from infra import mongo_db
 from infra.redis import RollingBloomFilter
 
@@ -39,14 +39,14 @@ async def consume_ad_events(streams: AdEvent):
             print("duplicate")
         else:
             # new event
-            charge: int = 1 if event.event_type == AdEventType.IMPRESSION else 2
+            charge, imp, click = get_charge_values(event.event_type)
             await mongo_db.db.update_one(
                 {"id": event.ad_id},
                 {
                     "$inc": {
                         "credit": -charge,
-                        "impression": 1 if event.event_type == AdEventType.IMPRESSION else 0,
-                        "click": 1 if event.event_type == AdEventType.CLICK else 0,
+                        "impression": imp,
+                        "click": click,
                     }
                 }
             )
