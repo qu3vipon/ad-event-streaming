@@ -41,7 +41,7 @@ async def consume_ad_events(streams: AdEvent):
     bloom_filter = RollingBloomFilter()
     async for key, event in streams.items():
         if await bloom_filter.exists(event=event):
-            # todo: possibly duplicate, check db..
+            # ToDo: possibly duplicate, check db..
             print("duplicate")
         else:
             # new event

@@ -1,5 +1,4 @@
 import asyncio
-import pickle
 from datetime import datetime, timedelta
 from typing import ClassVar, List
 
@@ -26,20 +25,23 @@ class RollingBloomFilter:
             self._get_key(at=at - timedelta(hours=h)) for h in range(self.WINDOW_HOURS + 1)[::-1]
         ]
 
+    @staticmethod
+    def _get_value(event) -> str:
+        return f"{event.ad_id}:{event.user_id}:{event.event_type}"
+
     async def exists(self, event) -> bool:
         loop = asyncio.get_event_loop()
-        pickled_event = pickle.dumps(event)
+        value: str = self._get_value(event=event)
 
         to_search: List[str] = self._get_keys_to_search(at=self._as_dt(event.event_time))
         for key in to_search:
-            if await loop.run_in_executor(None, redis.bf().exists, key, pickled_event):
+            if await loop.run_in_executor(None, redis.bf().exists, key, value):
                 return True
         return False
 
     def add(self, event):
         key: str = self._get_key(at=self._as_dt(event.event_time))
-
-        pickled_event = pickle.dumps(event)
+        value: str = self._get_value(event=event)
 
         # stale bloom filters will be remain..
-        redis.bf().add(key=key, item=pickled_event)
+        redis.bf().add(key=key, item=value)
